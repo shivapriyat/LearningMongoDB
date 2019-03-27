@@ -1,0 +1,24 @@
+db.employee.find({departmentId:90})
+db.employee.find({departmentId:90},{firstName:1})
+db.employee.find({departmentId:90},{firstName:1}).sort({salary:1})
+db.employee.find({departmentId:90},{firstName:1}).sort({salary:1}).limit(1)
+
+
+Max salary paying dept.
+db.employee.find({},{departmentId:1,_id:0}).sort({salary: -1}).limit(1)
+
+max salary in each dept
+db.employee.aggregate([
+	 {$group: {_id: "$departmentId", maxSalary: { $max: "$salary" }}}
+	 
+   ]
+)
+
+all salaries in descending order in the dept where LOWEST salary is paid
+db.employee.find(
+   {
+     departmentId: {
+		$in: db.employee.find({},{departmentId:1,_id:0}).sort({salary: 1}).limit(1).map(function(res) {  return res.departmentId;  })
+	 }
+  }
+).sort({salary: -1})
